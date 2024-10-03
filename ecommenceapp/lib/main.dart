@@ -1,3 +1,4 @@
+import 'package:ecommenceapp/Screens/Glosory/landing.dart';
 import 'package:ecommenceapp/Screens/SignUp.dart';
 import 'package:flutter/material.dart';
 
@@ -12,11 +13,9 @@ class MyApp extends StatelessWidget {
   //   the building of the real deal
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: "Ecoms",
-      home: Scaffold(
-        body: Signup(),
-      ),
+      home: Landing()
     );
   }
 }
