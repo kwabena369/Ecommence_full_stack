@@ -1,3 +1,4 @@
+import 'package:ecommenceapp/Screens/CheckOut/PayPalCheckoutScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommenceapp/Widget/SingleItem.dart';
 import 'package:intl/intl.dart';
@@ -68,134 +69,25 @@ class _ProductListScreenState extends State<ProductListScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
             return Container(
-              padding: EdgeInsets.all(16),
-              height: MediaQuery.of(context).size.height * 0.75,
+              padding: EdgeInsets.fromLTRB(24, 32, 24, 24),
+              height: MediaQuery.of(context).size.height * 0.85,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Your Cart',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 16),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: cartItems.length,
-                      itemBuilder: (context, index) {
-                        final item = cartItems[index];
-                        return Dismissible(
-                          key: Key(item['id']),
-                          direction: DismissDirection.endToStart,
-                          onDismissed: (direction) {
-                            setModalState(() {
-                              removeItem(item['id']);
-                            });
-                          },
-                          background: Container(
-                            color: Colors.red,
-                            alignment: Alignment.centerRight,
-                            padding: EdgeInsets.only(right: 20),
-                            child: Icon(Icons.delete, color: Colors.white),
-                          ),
-                          child: Card(
-                            elevation: 2,
-                            margin: EdgeInsets.symmetric(vertical: 8),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              title: Text(
-                                item['name'],
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Text(
-                                'Price: ${NumberFormat.currency(symbol: '\$').format(item['price'])}',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.remove_circle_outline),
-                                    onPressed: () {
-                                      setModalState(() {
-                                        updateQuantity(item['id'], -1);
-                                      });
-                                    },
-                                  ),
-                                  Text(
-                                    '${item['quantity']}',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.add_circle_outline),
-                                    onPressed: () {
-                                      setModalState(() {
-                                        updateQuantity(item['id'], 1);
-                                      });
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () {
-                                      setModalState(() {
-                                        removeItem(item['id']);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total:',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          NumberFormat.currency(symbol: '\$')
-                              .format(totalPrice),
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green[700]),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    child: Text('Checkout'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      textStyle:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () {
-                      // Implement checkout functionality
-                      Navigator.pop(context);
-                    },
-                  ),
+                  _buildHeader(),
+                  SizedBox(height: 24),
+                  _buildCartItemsList(setModalState),
+                  SizedBox(height: 24),
+                  _buildTotalPrice(),
+                  SizedBox(height: 24),
+                  _buildCheckoutButtons(context),
                 ],
               ),
             );
@@ -204,6 +96,158 @@ class _ProductListScreenState extends State<ProductListScreen> {
       },
     );
   }
+
+  Widget _buildHeader() {
+    return Column(
+      children: [
+        Container(
+          width: 40,
+          height: 5,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(2.5),
+          ),
+        ),
+        SizedBox(height: 24),
+        Text(
+          'Your Shopping Cart',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCartItemsList(StateSetter setModalState) {
+    return Expanded(
+      child: ListView.separated(
+        itemCount: cartItems.length,
+        separatorBuilder: (context, index) => Divider(height: 1),
+        itemBuilder: (context, index) {
+          final item = cartItems[index];
+          return Dismissible(
+            key: Key(item['id']),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
+              setModalState(() => removeItem(item['id']));
+            },
+            background: Container(
+              color: Colors.red[400],
+              alignment: Alignment.centerRight,
+              padding: EdgeInsets.only(right: 20),
+              child: Icon(Icons.delete, color: Colors.white),
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.symmetric(vertical: 8),
+              leading: CircleAvatar(
+                backgroundColor: Colors.grey[200],
+                child: Text(item['name'][0],
+                    style: TextStyle(color: Colors.black87)),
+              ),
+              title: Text(
+                item['name'],
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                NumberFormat.currency(symbol: '\$').format(item['price']),
+                style: TextStyle(color: Colors.green[700]),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.remove_circle_outline,
+                        color: Colors.red[400]),
+                    onPressed: () =>
+                        setModalState(() => updateQuantity(item['id'], -1)),
+                  ),
+                  Text('${item['quantity']}',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  IconButton(
+                    icon: Icon(Icons.add_circle_outline,
+                        color: Colors.green[400]),
+                    onPressed: () =>
+                        setModalState(() => updateQuantity(item['id'], 1)),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTotalPrice() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Total:',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(
+            NumberFormat.currency(symbol: '\$').format(totalPrice),
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.green[700]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCheckoutButtons(BuildContext context) {
+    return Column(
+      children: [
+        ElevatedButton(
+          child: Text('Proceed to Checkout'),
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, backgroundColor: Colors.green[600],
+            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        const SizedBox(height: 16),
+        ElevatedButton.icon(
+          icon: Icon(Icons.paypal, color: Colors.blue[900]),
+          label: Text('Checkout with PayPal'),
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.blue[900], backgroundColor: Colors.blue[50],
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PayPalCheckoutScreen(
+                  totalAmount: totalPrice,
+                  cartItems: cartItems,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
