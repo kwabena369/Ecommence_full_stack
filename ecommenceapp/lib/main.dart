@@ -1,4 +1,4 @@
-import 'package:ecommenceapp/Screens/Glosory/landing.dart';
+import 'package:ecommenceapp/Screens/Glosory/ProductListScreen.dart';
 import 'package:ecommenceapp/Screens/SignUp.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
   //   the building of the real deal
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Ecoms",
-      home: Landing()
+      home: ProductListScreen()
     );
   }
 }
