@@ -1,5 +1,5 @@
+import 'package:ecom/Widget/SingleItem.dart';
 import 'package:flutter/material.dart';
-import 'package:ecommenceapp/Widget/SingleItem.dart';
 import 'package:intl/intl.dart';
 
 class ProductListScreen extends StatefulWidget {
