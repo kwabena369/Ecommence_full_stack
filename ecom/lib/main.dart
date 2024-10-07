@@ -1,4 +1,5 @@
 import 'package:ecom/Screens/Glosory/ProductListScreen.dart';
+import 'package:ecom/Screens/Upload/UploadFile.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,6 +13,6 @@ class MyApp extends StatelessWidget {
   //   the building of the real deal
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: "Ecoms", home: ProductListScreen());
+    return MaterialApp(title: "Ecoms", home: ImageUploadScreen());
   }
 }

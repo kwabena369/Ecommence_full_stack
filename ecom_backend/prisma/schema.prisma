@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+//  the scheman for once specific items
+
+model  storeItem{
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name String 
+  price   String
+  Rating Int @default(5)
+}
