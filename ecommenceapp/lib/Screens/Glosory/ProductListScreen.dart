@@ -4,6 +4,8 @@ import 'package:ecommenceapp/Widget/SingleItem.dart';
 import 'package:intl/intl.dart';
 
 class ProductListScreen extends StatefulWidget {
+  const ProductListScreen({super.key});
+
   @override
   _ProductListScreenState createState() => _ProductListScreenState();
 }
@@ -55,8 +57,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
   void _showAddToCartFeedback() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Item added to cart'),
-        duration: Duration(seconds: 2),
+        content: const Text('Item added to cart'),
+        duration: const Duration(seconds: 2),
         action: SnackBarAction(
           label: 'View Cart',
           onPressed: _showCartOverlay,
@@ -69,24 +71,24 @@ class _ProductListScreenState extends State<ProductListScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
             return Container(
-              padding: EdgeInsets.fromLTRB(24, 32, 24, 24),
+              padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
               height: MediaQuery.of(context).size.height * 0.85,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildHeader(),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   _buildCartItemsList(setModalState),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   _buildTotalPrice(),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   _buildCheckoutButtons(context),
                 ],
               ),
@@ -108,8 +110,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
             borderRadius: BorderRadius.circular(2.5),
           ),
         ),
-        SizedBox(height: 24),
-        Text(
+        const SizedBox(height: 24),
+        const Text(
           'Your Shopping Cart',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
@@ -121,7 +123,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return Expanded(
       child: ListView.separated(
         itemCount: cartItems.length,
-        separatorBuilder: (context, index) => Divider(height: 1),
+        separatorBuilder: (context, index) => const Divider(height: 1),
         itemBuilder: (context, index) {
           final item = cartItems[index];
           return Dismissible(
@@ -133,19 +135,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
             background: Container(
               color: Colors.red[400],
               alignment: Alignment.centerRight,
-              padding: EdgeInsets.only(right: 20),
-              child: Icon(Icons.delete, color: Colors.white),
+              padding: const EdgeInsets.only(right: 20),
+              child: const Icon(Icons.delete, color: Colors.white),
             ),
             child: ListTile(
-              contentPadding: EdgeInsets.symmetric(vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(vertical: 8),
               leading: CircleAvatar(
                 backgroundColor: Colors.grey[200],
                 child: Text(item['name'][0],
-                    style: TextStyle(color: Colors.black87)),
+                    style: const TextStyle(color: Colors.black87)),
               ),
               title: Text(
                 item['name'],
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 NumberFormat.currency(symbol: '\$').format(item['price']),
@@ -162,7 +164,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   ),
                   Text('${item['quantity']}',
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   IconButton(
                     icon: Icon(Icons.add_circle_outline,
                         color: Colors.green[400]),
@@ -180,7 +182,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   Widget _buildTotalPrice() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(12),
@@ -188,7 +190,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Total:',
+          const Text('Total:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           Text(
             NumberFormat.currency(symbol: '\$').format(totalPrice),
@@ -206,38 +208,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return Column(
       children: [
         ElevatedButton(
-          child: Text('Proceed to Checkout'),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white, backgroundColor: Colors.green[600],
-            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
           onPressed: () => Navigator.pop(context),
+          child: Text('Proceed to Checkout'),
         ),
         const SizedBox(height: 16),
         ElevatedButton.icon(
           icon: Icon(Icons.paypal, color: Colors.blue[900]),
-          label: Text('Checkout with PayPal'),
+          label: const Text('Checkout with PayPal'),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.blue[900], backgroundColor: Colors.blue[50],
-            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
           onPressed: () {
             Navigator.pop(context);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PayPalCheckoutScreen(
-                  totalAmount: totalPrice,
-                  cartItems: cartItems,
-                ),
-              ),
-            );
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => 
+          //     ),
+          //   );
+          //   the same ssection for the other
           },
         ),
       ],
@@ -260,13 +260,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Products'),
+        title: const Text('Products'),
         actions: [
           Stack(
             alignment: Alignment.center,
             children: [
               IconButton(
-                icon: Icon(Icons.shopping_cart),
+                icon: const Icon(Icons.shopping_cart),
                 onPressed: _showCartOverlay,
               ),
               if (cartItemCount > 0)
@@ -274,18 +274,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   right: 0,
                   top: 0,
                   child: Container(
-                    padding: EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    constraints: BoxConstraints(
+                    constraints: const BoxConstraints(
                       minWidth: 16,
                       minHeight: 16,
                     ),
                     child: Text(
                       '$cartItemCount',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
                       ),
@@ -298,7 +298,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         ],
       ),
       body: GridView.builder(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 0.7,

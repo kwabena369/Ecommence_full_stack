@@ -8,7 +8,7 @@ void main() {
 
 //   the stating pint of the application
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   //   the building of the real deal
   @override

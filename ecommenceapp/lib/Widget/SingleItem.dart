@@ -10,7 +10,7 @@ class SingleItem extends StatelessWidget {
   final String imageUrl;
 
   const SingleItem({
-    Key? key,
+    super.key,
     required this.priceItem,
     required this.itemId,
     required this.ratingItem,
@@ -18,7 +18,7 @@ class SingleItem extends StatelessWidget {
     required this.onAddToCart,
     required this.onFavoriteToggle,
     this.imageUrl = 'assets/Fun/Cat.png',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class SingleItem extends StatelessWidget {
             color: Colors.grey.withOpacity(0.1),
             spreadRadius: 0,
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -69,25 +69,25 @@ class SingleItem extends StatelessWidget {
                       children: [
                         Container(
                           padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.9),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.star, color: Colors.green, size: 16),
-                              SizedBox(width: 4),
+                              const Icon(Icons.star, color: Colors.green, size: 16),
+                              const SizedBox(width: 4),
                               Text(
                                 ratingItem.toStringAsFixed(1),
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
                         ),
                         IconButton(
                           icon:
-                              Icon(Icons.favorite_border, color: Colors.white),
+                              const Icon(Icons.favorite_border, color: Colors.white),
                           onPressed: onFavoriteToggle,
                         ),
                       ],
@@ -98,7 +98,7 @@ class SingleItem extends StatelessWidget {
                       children: [
                         Text(
                           previewItem,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -106,14 +106,14 @@ class SingleItem extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: Text(
                                 '\$${priceItem.toStringAsFixed(2)}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -122,7 +122,6 @@ class SingleItem extends StatelessWidget {
                             ),
                             ElevatedButton(
                               onPressed: onAddToCart,
-                              child: Text('Add to Cart'),
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.green.shade700,
                                 backgroundColor: Colors.white,
@@ -132,6 +131,7 @@ class SingleItem extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 6, vertical: 8),
                               ),
+                              child: Text('Add to Cart'),
                             ),
                           ],
                         ),

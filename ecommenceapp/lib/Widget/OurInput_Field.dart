@@ -8,11 +8,11 @@ class OurinputField extends StatefulWidget {
   final void Function(String) onchange;
 
   const OurinputField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.PrefixIcon,
     required this.onchange,
-  }) : super(key: key);
+  });
   @override
   State<OurinputField> createState() => _OurinputFieldState();
 }
