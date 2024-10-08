@@ -1,6 +1,7 @@
 import 'package:ecom/Screens/Glosory/ProductListScreen.dart';
-import 'package:ecom/Screens/Upload/UploadFile.dart';
 import 'package:flutter/material.dart';
+
+import 'Screens/Upload/ItemBoardScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,6 +14,6 @@ class MyApp extends StatelessWidget {
   //   the building of the real deal
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "Ecoms", home: ImageUploadScreen());
+    return MaterialApp(title: "Ecoms", home: ItemBoardScreen());
   }
 }
