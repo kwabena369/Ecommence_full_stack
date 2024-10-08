@@ -8,7 +8,7 @@ let itemShema = new mongoose.Schema({
         type: String,
         required : true
     },
-    PreviewItem: {
+    PreviewItem_Base_Content: {
         type: String,
         required : true,
     },
