@@ -1,6 +1,11 @@
 import 'package:ecom/Widget/SingleItem.dart';
+import 'package:ecom/main.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:typed_data';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -11,6 +16,67 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   List<Map<String, dynamic>> cartItems = [];
+  List<Map<String, dynamic>> _items = [];
+  bool _isLoading = true;
+
+// the bring of the items
+  @override
+  void initState() {
+    super.initState();
+    _fetchItems();
+  }
+
+  Future<void> _fetchItems() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response =
+          await http.get(Uri.parse('https://ecom-node-back.vercel.app/items'));
+      if (response.statusCode == 200) {
+        setState(() {
+          _items = List<Map<String, dynamic>>.from(json.decode(response.body));
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load items');
+      }
+    } catch (e) {
+      print('Error fetching items: $e');
+      setState(() {
+        _items = [];
+        _isLoading = false;
+      });
+    }
+  }
+
+
+
+// Future<void> startPayment() async {
+//     Charge charge = Charge()
+//       ..amount = 10000 // Amount in kobo
+//       ..email = 'customer@email.com'
+//       ..currency = 'GHS' // Use GHS for Ghana
+//       ..reference = 'unique_reference'
+//       ..putCustomField('Charged From', 'Flutter')
+//       ..putMetaData('mobile_money', true); // Enable mobile money
+
+//     CheckoutResponse response = await plugin.checkout(
+//       context,
+//       method: CheckoutMethod.selectable, // This allows selecting mobile money
+//       charge: charge,
+//     );
+
+//     if (response.status == true) {
+//       // Payment successful
+//       print('Payment successful. Reference: ${response.reference}');
+//     } else {
+//       // Payment failed
+//       print('Payment failed: ${response.message}');
+//     }
+//   }
+
 
   void addToCart(Map<String, dynamic> product) {
     setState(() {
@@ -162,8 +228,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         setModalState(() => updateQuantity(item['id'], -1)),
                   ),
                   Text('${item['quantity']}',
-                      style:
-                          const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
                   IconButton(
                     icon: Icon(Icons.add_circle_outline,
                         color: Colors.green[400]),
@@ -178,6 +244,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
       ),
     );
   }
+
+  
+
+
+
+
 
   Widget _buildTotalPrice() {
     return Container(
@@ -208,65 +280,70 @@ class _ProductListScreenState extends State<ProductListScreen> {
       children: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white, backgroundColor: Colors.green[600],
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.green[600],
             padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textStyle:
+                const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
           onPressed: () => Navigator.pop(context),
           child: Text('Proceed to Checkout'),
         ),
-        const SizedBox(height: 16),
-        ElevatedButton.icon(
-          icon: Icon(Icons.paypal, color: Colors.blue[900]),
-          label: const Text('Checkout with PayPal'),
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.blue[900], backgroundColor: Colors.blue[50],
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => 
-          //     ),
-          //   );
-          //   the same ssection for the other
-          },
-        ),
+        // const SizedBox(height: 16),
+        // ElevatedButton.icon(
+        //   icon: Icon(Icons.paypal, color: Colors.blue[900]),
+        //   label: const Text('Checkout with PayPal'),
+        //   style: ElevatedButton.styleFrom(
+        //     foregroundColor: Colors.blue[900],
+        //     backgroundColor: Colors.blue[50],
+        //     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+        //     textStyle:
+        //         const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        //     shape:
+        //         RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        //   ),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //     // Navigator.push(
+        //     //     context,
+        //     //     MaterialPageRoute(
+        //     //       builder: (context) =>
+        //     //     ),
+        //     //   );
+        //     //   the same ssection for the other
+        //   },
+        // ),
       ],
     );
   }
 
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> products = [
-      {'id': '1', 'name': 'Product 1', 'price': 19.99, 'rating': 4.5},
-      {'id': '2', 'name': 'Product 2', 'price': 29.99, 'rating': 4.2},
-      {'id': '3', 'name': 'Product 3', 'price': 39.99, 'rating': 4.8},
-      // Add more products as needed
-    ];
+   
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Products'),
+        title: const Text('💀Serwaa☠️ ☠️',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 30,
+          fontWeight: FontWeight.bold
+        ),),
+        backgroundColor: Colors.orange.withOpacity(0.8),
         actions: [
           Stack(
+            
             alignment: Alignment.center,
+          
             children: [
+
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
                 onPressed: _showCartOverlay,
+                color: Colors.white,
+                
               ),
               if (cartItemCount > 0)
                 Positioned(
@@ -275,7 +352,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
-                      color: Colors.red,
+                      color: Colors.lightBlue,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     constraints: const BoxConstraints(
@@ -296,26 +373,70 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ),
         ],
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text('💀_Original Gangster',
+                  style: TextStyle(color: Colors.white, fontSize: 24)),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                    context, "/Home"); // Close the drawer
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.admin_panel_settings),
+              title: const Text('Orders'),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer
+                              Navigator.pushNamed(context, "/Order");
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Admin'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/AdminScreen");
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                 Navigator.pop(context); // Close the drawer
+                Navigator.pushNamed(context, "/AdminScreen");
+               },
+            ),
+          ],
+        ),
+      ),
       body: GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.7,
+          childAspectRatio: 0.75,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
         ),
-        itemCount: products.length,
+        itemCount: _items.length,
         itemBuilder: (context, index) {
-          final product = products[index];
+          final product = _items[index];
           return SingleItem(
-            previewItem: product['name'],
-            priceItem: product['price'],
-            itemId: product['id'],
-            ratingItem: product['rating'],
+            previewItem: product['name'] ?? '',
+            priceItem: (product['price'] as num?)?.toDouble() ?? 0.0,
+            itemId: product['id']?.toString() ?? '',
+            ratingItem: 5, // You may want to implement a real rating system
+            base64Image: product['PreviewItem_Base_Content'] as String?,
             onAddToCart: () => addToCart(product),
-            onFavoriteToggle: () {
-              // Toggle favorite status
-            },
+            onFavoriteToggle: () {},
           );
         },
       ),

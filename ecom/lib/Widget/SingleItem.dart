@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 class SingleItem extends StatelessWidget {
   final String previewItem;
@@ -7,18 +8,18 @@ class SingleItem extends StatelessWidget {
   final double ratingItem;
   final VoidCallback onAddToCart;
   final VoidCallback onFavoriteToggle;
-  final String imageUrl;
+  final String? base64Image;
 
   const SingleItem({
-    super.key,
+    Key? key,
     required this.priceItem,
     required this.itemId,
     required this.ratingItem,
     required this.previewItem,
     required this.onAddToCart,
     required this.onFavoriteToggle,
-    this.imageUrl = 'assets/Fun/Cat.png',
-  });
+    this.base64Image,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +40,28 @@ class SingleItem extends StatelessWidget {
         child: Stack(
           children: [
             // Product Image
-            Image.asset(
-              imageUrl,
-              height: 259,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+            if (base64Image != null && base64Image!.isNotEmpty)
+              Image.memory(
+                base64Decode(base64Image!),
+                height: 259,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 259,
+                    width: double.infinity,
+                    color: Colors.grey[300],
+                    child: Icon(Icons.error, color: Colors.red),
+                  );
+                },
+              )
+            else
+              Container(
+                height: 259,
+                width: double.infinity,
+                color: Colors.grey[300],
+                child: Icon(Icons.image, color: Colors.grey[600]),
+              ),
             // Gradient Overlay
             Container(
               decoration: BoxDecoration(
@@ -68,26 +85,28 @@ class SingleItem extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.9),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.star, color: Colors.green, size: 16),
+                              const Icon(Icons.star,
+                                  color: Colors.green, size: 16),
                               const SizedBox(width: 4),
                               Text(
                                 ratingItem.toStringAsFixed(1),
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
                         ),
                         IconButton(
-                          icon:
-                              const Icon(Icons.favorite_border, color: Colors.white),
+                          icon: const Icon(Icons.favorite_border,
+                              color: Colors.white),
                           onPressed: onFavoriteToggle,
                         ),
                       ],

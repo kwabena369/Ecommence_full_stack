@@ -60,6 +60,11 @@ app.get("/items", async (req, res) => {
   }
 });
 
+//   router for handli/ng the deleting of things
+app.delete("/items:id", () => {
+   console.log("golden space")
+})
+
 // Health check route
 app.get("/", (req, res) => {
   res.status(200).send("Server is running");
