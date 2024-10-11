@@ -1,3 +1,4 @@
+import 'package:ecom/Screens/CustomerSection/CheckOut.dart';
 import 'package:ecom/Widget/SingleItem.dart';
 import 'package:ecom/main.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +53,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
     }
   }
 
-
-
 // Future<void> startPayment() async {
 //     Charge charge = Charge()
 //       ..amount = 10000 // Amount in kobo
@@ -78,22 +77,32 @@ class _ProductListScreenState extends State<ProductListScreen> {
 //     }
 //   }
 
-
   void addToCart(Map<String, dynamic> product) {
     setState(() {
-      int index = cartItems.indexWhere((item) => item['id'] == product['id']);
+      int index = cartItems.indexWhere((item) => item['_id'] == product['_id']);
       if (index != -1) {
         cartItems[index]['quantity']++;
       } else {
-        cartItems.add({...product, 'quantity': 1});
+        cartItems.add({
+          ...product,
+          'quantity': 1,
+          'Price': (product['Price'] as num).toDouble(), // Convert to double
+        });
       }
     });
     _showAddToCartFeedback();
   }
 
+  double get totalPrice {
+    return cartItems.fold(
+      0.0,
+      (sum, item) =>
+          sum + ((item['Price'] as num).toDouble() * (item['quantity'] as int)),
+    );
+  }
   void updateQuantity(String id, int change) {
     setState(() {
-      int index = cartItems.indexWhere((item) => item['id'] == id);
+      int index = cartItems.indexWhere((item) => item['_id'] == id);
       if (index != -1) {
         cartItems[index]['quantity'] += change;
         if (cartItems[index]['quantity'] <= 0) {
@@ -105,7 +114,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   void removeItem(String id) {
     setState(() {
-      cartItems.removeWhere((item) => item['id'] == id);
+      cartItems.removeWhere((item) => item['_id'] == id);
     });
   }
 
@@ -113,12 +122,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return cartItems.fold(0, (sum, item) => sum + (item['quantity'] as int));
   }
 
-  double get totalPrice {
-    return cartItems.fold(
-        0.0,
-        (sum, item) =>
-            sum + (item['price'] as double) * (item['quantity'] as int));
-  }
+
 
   void _showAddToCartFeedback() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -193,10 +197,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
         itemBuilder: (context, index) {
           final item = cartItems[index];
           return Dismissible(
-            key: Key(item['id']),
+            key: Key(item['_id']),
             direction: DismissDirection.endToStart,
             onDismissed: (direction) {
-              setModalState(() => removeItem(item['id']));
+              setModalState(() => removeItem(item['_id']));
             },
             background: Container(
               color: Colors.red[400],
@@ -216,7 +220,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                NumberFormat.currency(symbol: '\$').format(item['price']),
+                NumberFormat.currency(symbol: '\$')
+                    .format((item['Price'] as num).toDouble()),
                 style: TextStyle(color: Colors.green[700]),
               ),
               trailing: Row(
@@ -226,7 +231,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     icon: Icon(Icons.remove_circle_outline,
                         color: Colors.red[400]),
                     onPressed: () =>
-                        setModalState(() => updateQuantity(item['id'], -1)),
+                        setModalState(() => updateQuantity(item['_id'], -1)),
                   ),
                   Text('${item['quantity']}',
                       style: const TextStyle(
@@ -235,7 +240,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     icon: Icon(Icons.add_circle_outline,
                         color: Colors.green[400]),
                     onPressed: () =>
-                        setModalState(() => updateQuantity(item['id'], 1)),
+                        setModalState(() => updateQuantity(item['_id'], 1)),
                   ),
                 ],
               ),
@@ -245,12 +250,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
       ),
     );
   }
-
-  
-
-
-
-
 
   Widget _buildTotalPrice() {
     return Container(
@@ -289,62 +288,39 @@ class _ProductListScreenState extends State<ProductListScreen> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          onPressed: () => Navigator.pop(context),
-          child: Text('Proceed to Checkout'),
+         onPressed: () {
+            Navigator.pop(context); // Close the cart overlay
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Checkout(cartItems: cartItems),
+              ),
+            );
+          },
+          child: const Text('Proceed to Checkout'),
         ),
-        // const SizedBox(height: 16),
-        // ElevatedButton.icon(
-        //   icon: Icon(Icons.paypal, color: Colors.blue[900]),
-        //   label: const Text('Checkout with PayPal'),
-        //   style: ElevatedButton.styleFrom(
-        //     foregroundColor: Colors.blue[900],
-        //     backgroundColor: Colors.blue[50],
-        //     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-        //     textStyle:
-        //         const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        //     shape:
-        //         RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        //   ),
-        //   onPressed: () {
-        //     Navigator.pop(context);
-        //     // Navigator.push(
-        //     //     context,
-        //     //     MaterialPageRoute(
-        //     //       builder: (context) =>
-        //     //     ),
-        //     //   );
-        //     //   the same ssection for the other
-        //   },
-        // ),
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-   
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('💀Serwaa☠️ ☠️',
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 30,
-          fontWeight: FontWeight.bold
-        ),),
+        title: const Text(
+          '💀Serwaa☠️ ☠️',
+          style: TextStyle(
+              color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.orange.withOpacity(0.8),
         actions: [
           Stack(
-            
             alignment: Alignment.center,
-          
             children: [
-
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
                 onPressed: _showCartOverlay,
                 color: Colors.white,
-                
               ),
               if (cartItemCount > 0)
                 Positioned(
@@ -388,8 +364,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               title: const Text('Home'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(
-                    context, "/Home"); // Close the drawer
+                Navigator.pushNamed(context, "/Home"); // Close the drawer
               },
             ),
             ListTile(
@@ -397,7 +372,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               title: const Text('Orders'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
-                              Navigator.pushNamed(context, "/Order");
+                Navigator.pushNamed(context, "/Order");
               },
             ),
             ListTile(
@@ -412,9 +387,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
               onTap: () {
-                 Navigator.pop(context); // Close the drawer
+                Navigator.pop(context); // Close the drawer
                 Navigator.pushNamed(context, "/AdminScreen");
-               },
+              },
             ),
           ],
         ),
@@ -432,8 +407,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
           final product = _items[index];
           return SingleItem(
             previewItem: product['name'] ?? '',
-            priceItem: (product['price'] as num?)?.toDouble() ?? 0.0,
-            itemId: product['id']?.toString() ?? '',
+            priceItem: (product['Price'] as num?)?.toDouble() ?? 0.0,
+            itemId: product['_id']?.toString() ?? '',
             ratingItem: 5, // You may want to implement a real rating system
             base64Image: product['PreviewItem_Base_Content'] as String?,
             onAddToCart: () => addToCart(product),

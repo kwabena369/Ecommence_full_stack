@@ -3,8 +3,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const itemModel = require('./Models/itemModel'); // Make sure this path is correct
 
+
+//  Various backend secma.
+const itemModel = require('./Models/itemModel'); // Make sure this path is correct
+const OrderItem = require("./Models/OrderItem");
+const User = require("./Models/User");
 const app = express();
 
 // Middleware
@@ -46,6 +50,7 @@ app.post("/UploadFile", async (req, res) => {
   }
 });
 
+
 // New route for fetching all items
 app.get("/items", async (req, res) => {
   try {
@@ -60,10 +65,82 @@ app.get("/items", async (req, res) => {
   }
 });
 
+
+
+app.use(express.json());
+
+app.post("/newUser", async (req, res) => {
+  console.log("newUser Creation");
+  try {
+    const {
+      email,
+      displayName,
+      firebaseUid,
+      authProvider,
+      photoURL,
+      phoneNumber,
+      isEmailVerified
+    } = req.body;
+
+    // Check if user already exists
+    let user = await User.findOne({ firebaseUid });
+
+    if (user) {
+      // Update existing user
+      user.displayName = displayName;
+      user.photoURL = photoURL;
+      user.phoneNumber = phoneNumber;
+      user.isEmailVerified = isEmailVerified;
+      user.lastLogin = new Date();
+      await user.save();
+    } else {
+      // Create new user
+      user = new User({
+        email,
+        displayName,
+        firebaseUid,
+        authProvider,
+        photoURL,
+        phoneNumber,
+        isEmailVerified,
+        lastLogin: new Date()
+      });
+      await user.save();
+    }
+
+    res.json({
+      status: true,
+      message: "User data saved successfully",
+      user: {
+        id: user._id,
+        email: user.email,
+        displayName: user.displayName,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: false,
+      message: "Error saving user data"
+    });
+  }
+});
+
 //   router for handli/ng the deleting of things
 app.delete("/items:id", () => {
    console.log("golden space")
 })
+//  for handling  the creation of order
+app.post("/newOrder", async(req) => {
+  console.log("newOrder Intake")
+  //  the outcome 
+  let req = await OrderItem.create({
+    user: "null",
+    items
+})
+})
+
 
 // Health check route
 app.get("/", (req, res) => {
@@ -75,5 +152,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
 
 module.exports = app; // This is important for Vercel

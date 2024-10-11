@@ -1,3 +1,4 @@
+import 'package:ecom/Screens/Authentication/Authenticate.dart';
 import 'package:ecom/Screens/CustomerSection/ProductListScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -21,15 +22,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Ecoms", 
-    home: ProductListScreen(),
+    home: const AuthScreen(),
       debugShowCheckedModeBanner: false,
 
     routes: {
        "/AdminScreen" : (context)=>  ItemBoardScreen(),
        "/Home" : (context)=> const  ProductListScreen(),
-       "Order":(context)=> ItemBoardScreen()
+       "/Order":(context)=> ItemBoardScreen(),
     },
-    
     );
   }
 }
