@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({Key? key}) : super(key: key);
+  const AuthScreen({super.key});
 
   @override
   _AuthScreenState createState() => _AuthScreenState();
@@ -96,7 +96,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isSignUp ? 'Sign Up' : 'Sign In',style: TextStyle(
+        title: Text(_isSignUp ? 'Sign Up' : 'Sign In',style: const TextStyle(
           color: Colors.black,
           fontSize: 30,
           fontWeight: FontWeight.bold

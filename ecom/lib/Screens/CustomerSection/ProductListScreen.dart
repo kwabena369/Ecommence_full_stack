@@ -1,12 +1,10 @@
 import 'package:ecom/Screens/CustomerSection/CheckOut.dart';
 import 'package:ecom/Widget/SingleItem.dart';
-import 'package:ecom/main.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:typed_data';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -395,7 +393,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         ),
       ),
       body: GridView.builder(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 0.75,

@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
 class ItemBoardScreen extends StatefulWidget {
+  const ItemBoardScreen({super.key});
+
   @override
   _ItemBoardScreenState createState() => _ItemBoardScreenState();
 }
@@ -83,13 +85,13 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Item uploaded successfully')),
+          const SnackBar(content: Text('Item uploaded successfully')),
         );
         Navigator.pop(context);
         _fetchItems();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to upload item')),
+          const SnackBar(content: Text('Failed to upload item')),
         );
       }
     }
@@ -102,7 +104,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
       );
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Item deleted successfully')),
+          const SnackBar(content: Text('Item deleted successfully')),
         );
         _fetchItems();
       } else {
@@ -111,7 +113,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
     } catch (e) {
       print('Error deleting item: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete item')),
+        const SnackBar(content: Text('Failed to delete item')),
       );
     }
   }
@@ -139,7 +141,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
 
         if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Item updated successfully')),
+            const SnackBar(content: Text('Item updated successfully')),
           );
           Navigator.pop(context);
           _fetchItems();
@@ -149,7 +151,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
       } catch (e) {
         print('Error updating item: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update item')),
+          const SnackBar(content: Text('Failed to update item')),
         );
       }
     }
@@ -193,7 +195,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
                 children: [
                   TextFormField(
                     initialValue: _itemName,
-                    decoration: InputDecoration(labelText: 'Item Name'),
+                    decoration: const InputDecoration(labelText: 'Item Name'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an item name';
@@ -204,7 +206,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
                   ),
                   TextFormField(
                     initialValue: _itemPrice.toString(),
-                    decoration: InputDecoration(labelText: 'Price'),
+                    decoration: const InputDecoration(labelText: 'Price'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -219,7 +221,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
                   ),
                   TextFormField(
                     initialValue: _itemAim,
-                    decoration: InputDecoration(labelText: 'Aim'),
+                    decoration: const InputDecoration(labelText: 'Aim'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an aim';
@@ -228,14 +230,14 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
                     },
                     onSaved: (value) => _itemAim = value ?? '',
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _pickImage,
                     child: Text(isEdit ? 'Change Image' : 'Select Image'),
                   ),
                   if (_imageBytes != null)
                     Image.memory(_imageBytes!, height: 100),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed:
                         isEdit ? () => _updateItem(itemId!) : _uploadItem,
@@ -261,7 +263,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
         actions: [
           ElevatedButton.icon(
             onPressed: _showAddItemModal,
-            icon: Icon(Icons.add, color: Colors.white),
+            icon: const Icon(Icons.add, color: Colors.white),
             label: const Text(
               "Add Item",
               style: TextStyle(color: Colors.white),
@@ -273,11 +275,11 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
               ),
             ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
         ],
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _items.isEmpty
               ? const Center(
                   child: Column(
@@ -294,7 +296,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
                 )
               : SafeArea(
                   child: GridView.builder(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 0.75,

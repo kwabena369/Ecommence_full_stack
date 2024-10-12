@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class Checkout extends StatefulWidget {
   final List<Map<String, dynamic>> cartItems;
 
-  const Checkout({Key? key, required this.cartItems}) : super(key: key);
+  const Checkout({super.key, required this.cartItems});
 
   @override
   State<Checkout> createState() => _CheckoutState();
@@ -119,10 +119,10 @@ class _CheckoutState extends State<Checkout> {
                   const SnackBar(content: Text('Order placed successfully!')),
                 );
               },
-              child: const Text('Place Order'),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
               ),
+              child: const Text('Place Order'),
             ),
           ),
         ],

@@ -11,7 +11,7 @@ class AdminSingleItem extends StatelessWidget {
   final VoidCallback onEdit;
 
   const AdminSingleItem({
-    Key? key,
+    super.key,
     required this.previewItem,
     required this.priceItem,
     required this.itemId,
@@ -19,7 +19,7 @@ class AdminSingleItem extends StatelessWidget {
     required this.onDelete,
     required this.onEdit,
     this.base64Image,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class AdminSingleItem extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: Colors.grey[300],
-                    child: Icon(Icons.error, color: Colors.red),
+                    child: const Icon(Icons.error, color: Colors.red),
                   );
                 },
               )
@@ -88,11 +88,11 @@ class AdminSingleItem extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.star, color: Colors.amber, size: 16),
-                            SizedBox(width: 4),
+                            const Icon(Icons.star, color: Colors.amber, size: 16),
+                            const SizedBox(width: 4),
                             Text(
                               ratingItem.toStringAsFixed(1),
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -100,11 +100,11 @@ class AdminSingleItem extends StatelessWidget {
                       Row(
                         children: [
                           IconButton(
-                            icon: Icon(Icons.edit, color: Colors.white),
+                            icon: const Icon(Icons.edit, color: Colors.white),
                             onPressed: onEdit,
                           ),
                           IconButton(
-                            icon: Icon(Icons.delete, color: Colors.white),
+                            icon: const Icon(Icons.delete, color: Colors.white),
                             onPressed: onDelete,
                           ),
                         ],
@@ -117,7 +117,7 @@ class AdminSingleItem extends StatelessWidget {
                     children: [
                       Text(
                         previewItem,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -125,10 +125,10 @@ class AdminSingleItem extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         '\$${priceItem.toStringAsFixed(2)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,

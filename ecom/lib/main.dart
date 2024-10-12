@@ -1,5 +1,6 @@
 import 'package:ecom/Screens/Authentication/Authenticate.dart';
 import 'package:ecom/Screens/CustomerSection/ProductListScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'Screens/Admin/ItemBoardScreen.dart';
@@ -7,7 +8,12 @@ import 'Screens/Admin/ItemBoardScreen.dart';
 
 // final plugin = PaystackPlugin();
 
-void main() {
+void main()async {
+
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
     WidgetsFlutterBinding.ensureInitialized();
   // plugin.initialize(publicKey: 'pk_test_f7353ba84f6321eb54daa5701fcc043e1c0f32c9');
@@ -26,9 +32,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
     routes: {
-       "/AdminScreen" : (context)=>  ItemBoardScreen(),
+       "/AdminScreen" : (context)=>  const ItemBoardScreen(),
        "/Home" : (context)=> const  ProductListScreen(),
-       "/Order":(context)=> ItemBoardScreen(),
+       "/Order":(context)=> const ItemBoardScreen(),
     },
     );
   }

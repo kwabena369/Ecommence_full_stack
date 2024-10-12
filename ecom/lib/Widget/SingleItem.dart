@@ -11,7 +11,7 @@ class SingleItem extends StatelessWidget {
   final String? base64Image;
 
   const SingleItem({
-    Key? key,
+    super.key,
     required this.priceItem,
     required this.itemId,
     required this.ratingItem,
@@ -19,7 +19,7 @@ class SingleItem extends StatelessWidget {
     required this.onAddToCart,
     required this.onFavoriteToggle,
     this.base64Image,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class SingleItem extends StatelessWidget {
                     height: 259,
                     width: double.infinity,
                     color: Colors.grey[300],
-                    child: Icon(Icons.error, color: Colors.red),
+                    child: const Icon(Icons.error, color: Colors.red),
                   );
                 },
               )
@@ -150,7 +150,7 @@ class SingleItem extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 6, vertical: 8),
                               ),
-                              child: Text('Add to Cart'),
+                              child: const Text('Add to Cart'),
                             ),
                           ],
                         ),
