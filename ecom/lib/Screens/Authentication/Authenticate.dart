@@ -78,7 +78,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
     // Send user data to backend
     final response = await http.post(
-      Uri.parse('https://your-backend-url.com/newUser'),
+      Uri.parse('https://ecom-node-back.vercel.app/newUser'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(userData),
     );

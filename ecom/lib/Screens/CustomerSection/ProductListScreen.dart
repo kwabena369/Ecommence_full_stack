@@ -1,13 +1,13 @@
 import 'package:ecom/Screens/CustomerSection/CheckOut.dart';
 import 'package:ecom/Widget/SingleItem.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductListScreen extends StatefulWidget {
-  const ProductListScreen({super.key});
+  const ProductListScreen({Key? key}) : super(key: key);
 
   @override
   _ProductListScreenState createState() => _ProductListScreenState();
@@ -17,19 +17,29 @@ class _ProductListScreenState extends State<ProductListScreen> {
   List<Map<String, dynamic>> cartItems = [];
   List<Map<String, dynamic>> _items = [];
   bool _isLoading = true;
+  Map<String, dynamic>? _userData;
 
-// the bring of the items
   @override
   void initState() {
     super.initState();
     _fetchItems();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? userJson = prefs.getString('user');
+    if (userJson != null) {
+      setState(() {
+        _userData = json.decode(userJson);
+      });
+    }
   }
 
   Future<void> _fetchItems() async {
     setState(() {
       _isLoading = true;
     });
-    //  t
 
     try {
       final response =
@@ -51,29 +61,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
     }
   }
 
-// Future<void> startPayment() async {
-//     Charge charge = Charge()
-//       ..amount = 10000 // Amount in kobo
-//       ..email = 'customer@email.com'
-//       ..currency = 'GHS' // Use GHS for Ghana
-//       ..reference = 'unique_reference'
-//       ..putCustomField('Charged From', 'Flutter')
-//       ..putMetaData('mobile_money', true); // Enable mobile money
-
-//     CheckoutResponse response = await plugin.checkout(
-//       context,
-//       method: CheckoutMethod.selectable, // This allows selecting mobile money
-//       charge: charge,
-//     );
-
-//     if (response.status == true) {
-//       // Payment successful
-//       print('Payment successful. Reference: ${response.reference}');
-//     } else {
-//       // Payment failed
-//       print('Payment failed: ${response.message}');
-//     }
-//   }
+  void _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user');
+    Navigator.pushReplacementNamed(context, '/AuthenScreen');
+  }
 
   void addToCart(Map<String, dynamic> product) {
     setState(() {
@@ -84,7 +76,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         cartItems.add({
           ...product,
           'quantity': 1,
-          'Price': (product['Price'] as num).toDouble(), // Convert to double
+          'Price': (product['Price'] as num).toDouble(),
         });
       }
     });
@@ -98,6 +90,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           sum + ((item['Price'] as num).toDouble() * (item['quantity'] as int)),
     );
   }
+
   void updateQuantity(String id, int change) {
     setState(() {
       int index = cartItems.indexWhere((item) => item['_id'] == id);
@@ -119,8 +112,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   int get cartItemCount {
     return cartItems.fold(0, (sum, item) => sum + (item['quantity'] as int));
   }
-
-
 
   void _showAddToCartFeedback() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -286,7 +277,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-         onPressed: () {
+          onPressed: () {
             Navigator.pop(context); // Close the cart overlay
             Navigator.push(
               context,
@@ -352,25 +343,46 @@ class _ProductListScreenState extends State<ProductListScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(color: Colors.blue),
-              child: Text('💀_Original Gangster',
-                  style: TextStyle(color: Colors.white, fontSize: 24)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '💀_Original Gangster',
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
+                  SizedBox(height: 10),
+                  if (_userData != null) ...[
+                    Text(
+                      'Welcome, ${_userData!['email']}',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ],
+                ],
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.home),
               title: const Text('Home'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, "/Home"); // Close the drawer
               },
             ),
             ListTile(
               leading: const Icon(Icons.admin_panel_settings),
               title: const Text('Orders'),
               onTap: () {
-                Navigator.pop(context); // Close the drawer
+                Navigator.pop(context);
                 Navigator.pushNamed(context, "/Order");
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.history_rounded),
+              title: const Text('History'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/History");
               },
             ),
             ListTile(
@@ -385,35 +397,42 @@ class _ProductListScreenState extends State<ProductListScreen> {
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
               onTap: () {
-                Navigator.pop(context); // Close the drawer
+                Navigator.pop(context);
                 Navigator.pushNamed(context, "/AdminScreen");
               },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: _logout,
             ),
           ],
         ),
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.75,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-        ),
-        itemCount: _items.length,
-        itemBuilder: (context, index) {
-          final product = _items[index];
-          return SingleItem(
-            previewItem: product['name'] ?? '',
-            priceItem: (product['Price'] as num?)?.toDouble() ?? 0.0,
-            itemId: product['_id']?.toString() ?? '',
-            ratingItem: 5, // You may want to implement a real rating system
-            base64Image: product['PreviewItem_Base_Content'] as String?,
-            onAddToCart: () => addToCart(product),
-            onFavoriteToggle: () {},
-          );
-        },
-      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : GridView.builder(
+              padding: const EdgeInsets.all(16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.75,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: _items.length,
+              itemBuilder: (context, index) {
+                final product = _items[index];
+                return SingleItem(
+                  previewItem: product['name'] ?? '',
+                  priceItem: (product['Price'] as num?)?.toDouble() ?? 0.0,
+                  itemId: product['_id']?.toString() ?? '',
+                  ratingItem: 5,
+                  base64Image: product['PreviewItem_Base_Content'] as String?,
+                  onAddToCart: () => addToCart(product),
+                  onFavoriteToggle: () {},
+                );
+              },
+            ),
     );
   }
 }

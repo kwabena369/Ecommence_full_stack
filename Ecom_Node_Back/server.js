@@ -131,16 +131,71 @@ app.post("/newUser", async (req, res) => {
 app.delete("/items:id", () => {
    console.log("golden space")
 })
-//  for handling  the creation of order
-app.post("/newOrder", async(req) => {
-  console.log("newOrder Intake")
-  //  the outcome 
-  let req = await OrderItem.create({
-    user: "null",
-    items
-})
-})
+//  for new orders
+app.post("/newOrder", async (req, res) => {
+  console.log("newOrder Intake");
+  try {
+    const { user, items, totalAmount, shippingAddress } = req.body;
 
+    //  finding that specific user
+    let userContent = await User.findOne({
+      email : user
+    })
+
+    let userId = userContent.id
+    if (userContent) {
+          const newOrder = new OrderItem({
+      userId,
+      items,
+      totalAmount,
+      shippingAddress,
+    });
+
+    const savedOrder = await newOrder.save();
+
+    res.status(200).json({
+      message: "Order created successfully",
+      orderId: savedOrder._id,
+    });
+
+    } else {
+        res.status(500).json({
+      message: "kcuf it is right ",
+      orderId: savedOrder._id,
+    });
+
+    }
+
+
+  } catch (error) {
+    console.error("Error creating order:", error);
+    res.status(500).json({
+      message: "Error creating order",
+      error: error.message,
+    });
+  }
+});
+
+app.get("/orders/:userEmail", async (req, res) => {
+  try {
+    let userContent= req.params.userEmail;
+
+    let userInformation = await User.findOne({
+       email : userContent
+     })
+    const orders = await OrderItem.find({ userId: userInformation.id })
+      .populate('items.item')
+      .sort({ orderDate: -1 });
+    res.status(200).json(orders);
+    console.log(orders)
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({
+      message: "Error fetching orders",
+      error: error.message,
+    });
+  }
+});
 
 // Health check route
 app.get("/", (req, res) => {

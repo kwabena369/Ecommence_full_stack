@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',  
+  userId: {
+    type: String,
     required: true
   },
   items: [{
@@ -32,9 +31,8 @@ const orderSchema = new mongoose.Schema({
     city: String,
     state: String,
     country: String,
-    zipCode: String,
-  required : false
-    },
+    zipCode: String
+  },
   orderDate: {
     type: Date,
     default: Date.now
