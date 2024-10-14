@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema({
     unique: true,
       sparse: true
   },
+  Secret_String: {
+    type: String,
+    trim: true,
+    required:false
+  }
+  ,
   authProvider: {
     type: String,
     enum: ['email', 'google', 'facebook'],

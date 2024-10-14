@@ -1,29 +1,82 @@
-require("dotenv").config()
+require("dotenv").config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-
-
+const session = require('express-session');
+const bcrypt = require('bcrypt');
+const ejs = require('ejs');
 //  Various backend secma.
 const itemModel = require('./Models/itemModel'); // Make sure this path is correct
 const OrderItem = require("./Models/OrderItem");
 const User = require("./Models/User");
 const app = express();
+const path = require('path');
+
+
+
+
+ const mongodb_url = process.env.DATABASE_URL
+// Database connection
+mongoose.connect(mongodb_url,)
+  .then(() => console.log("Connected to database"))
+  .catch((err) => {
+    console.error("Failed to connect to database:", err);
+    process.exit(1);  // Exit the process if unable to connect to the database
+  });
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
- const mongodb_url = process.env.DATABASE_URL
-// Database connection
-mongoose.connect(mongodb_url, { serverSelectionTimeoutMS: 5000 })
-  .then(() => console.log("Connected to database"))
-  .catch((err) => {
-    console.error("Failed to connect to database:", err);
-    process.exit(1);  // Exit the process if unable to connect to the database
-  });
+
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+//  the routing for the admin and others 
+// const authenticateAdmin = (req, res, next) => {
+//   if (req.session.adminId) {
+//     next();
+//   } else {
+//     res.redirect('/admin/login');
+//   }
+// };
+
+
+app.get('/admin/login', (req, res) => {
+  res.render('login');
+});
+
+app.post('/admin/login', async (req, res) => {
+  const { email } = req.body;
+  const admin = await User.findOne({ email:email, role: 'admin' });
+
+// but later  leter the perosn need to end  enter thier information .
+  if (admin ) {
+    // req.session.adminId = admin._id;
+    res.redirect('/admin/orders');
+  } else {
+    res.render('login', { error: 'Invalid credentials' });
+  }
+});
+
+// Admin orders page
+app.get('/admin/orders', async (req, res) => {
+  const orders = await OrderItem.find().sort({ orderDate: -1 });
+  res.render('orders', { orders });
+});
+//  there come a time when we 
+
+// Update order status
+app.post('/admin/orders/:orderId/update-status', async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  await OrderItem.findByIdAndUpdate(orderId, { status : status });
+  res.redirect('/admin/orders');
+});
+
 // Route for uploading file
 app.post("/UploadFile", async (req, res) => {
   try {
