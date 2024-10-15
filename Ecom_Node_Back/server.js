@@ -13,7 +13,7 @@ const User = require("./Models/User");
 const app = express();
 const path = require('path');
 
-
+const https = require("https")
 
 
  const mongodb_url = process.env.DATABASE_URL
@@ -116,6 +116,103 @@ app.get("/items", async (req, res) => {
       error: error.message
     });
   }
+});
+
+
+
+
+
+const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
+
+
+
+
+app.post('/submit-otp', async (req, res) => {
+  const { otp, reference } = req.body;
+
+  const params = JSON.stringify({
+    "otp": otp,
+    "reference": reference
+  });
+
+  const options = {
+    hostname: 'api.paystack.co',
+    port: 443,
+    path: '/charge/submit_otp',
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${paystackSecretKey}`,
+      'Content-Type': 'application/json'
+    }
+  };
+
+  const paystackReq = https.request(options, paystackRes => {
+    let data = '';
+
+    paystackRes.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    paystackRes.on('end', () => {
+      console.log(JSON.parse(data));
+      res.header('Content-Type', 'application/json');
+      res.status(200).json(JSON.parse(data));
+    });
+  }).on('error', error => {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to submit OTP' });
+  });
+
+  paystackReq.write(params);
+  paystackReq.end();
+});
+
+
+
+app.post('/initiate-payment', async (req, res) => {
+  const { amount, phoneNumber } = req.body;
+
+  const params = JSON.stringify({
+    "amount": amount * 100, // Paystack expects amount in kobo
+    "email": "bernardboampong614@gmail.com", // You might want to get this from the user or your database
+    "currency": "GHS",
+    "mobile_money": {
+      "phone": phoneNumber,
+      "provider": "mtn"
+    }
+  });
+
+  const options = {
+    hostname: 'api.paystack.co',
+    port: 443,
+    path: '/charge',
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${paystackSecretKey}`,
+      'Content-Type': 'application/json'
+    }
+  };
+
+  const paystackReq = https.request(options, paystackRes => {
+    let data = '';
+
+    paystackRes.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    paystackRes.on('end', () => {
+      console.log(JSON.parse(data));
+      res.header('Content-Type', 'application/json');
+      res.header('Access-Control-Allow-Origin', '*');
+      res.status(200).json(JSON.parse(data));
+    });
+  }).on('error', error => {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to initiate payment' });
+  });
+
+  paystackReq.write(params);
+  paystackReq.end();
 });
 
 

@@ -58,11 +58,43 @@ class _OrdersScreenState extends State<OrdersScreen> {
     }
   }
 
+//  this function called the fetchOrders again
+  void RefreshPage() {
+    //   ti
+    _fetchOrders();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Orders'),
+        actions: [
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.transparent),
+            child: Row(children: [
+              ElevatedButton(
+                  onPressed: () {
+                    RefreshPage();
+                  },
+                  child: Text(
+                    "RefreshPage",
+                    style: TextStyle(
+                        color: Colors.orange,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w100),
+                  )),
+              // FOR THE APYEMENT PLACE
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacementNamed("/Pay");
+                  },
+                  child: const Text("Payment"))
+            ]),
+          )
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

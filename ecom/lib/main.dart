@@ -1,6 +1,7 @@
 import 'package:ecom/Screens/Authentication/Authenticate.dart';
 import 'package:ecom/Screens/CustomerSection/OrderHistory/OrderStatus.dart';
 import 'package:ecom/Screens/CustomerSection/ProductListScreen.dart';
+import 'package:ecom/Screens/TestingPayment/Payment.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
        "/Home" : (context)=> const  ProductListScreen(),
        "/Order":(context)=> const ItemBoardScreen(),
        "/AuthenScreen":(context) =>const AuthScreen(),
-       "/History":(context)=>const OrdersScreen()
+       "/History":(context)=>const OrdersScreen(),
+       "/Pay":(context)=> PaymentScreen()
     },
     );
   }
