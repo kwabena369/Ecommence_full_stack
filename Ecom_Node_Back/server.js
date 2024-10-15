@@ -148,7 +148,6 @@ app.post('/submit-otp', async (req, res) => {
 
   const paystackReq = https.request(options, paystackRes => {
     let data = '';
-
     paystackRes.on('data', (chunk) => {
       data += chunk;
     });
