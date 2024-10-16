@@ -169,15 +169,29 @@ app.post('/submit-otp', async (req, res) => {
 
 
 app.post('/initiate-payment', async (req, res) => {
-  const { amount, phoneNumber } = req.body;
-
+  const { amount, phoneNumber,OptionSelected } = req.body;
+let true_One = ""
+  //  the switch statement to handle everthing
+  switch (OptionSelected) {
+    case "MTN":
+      true_One = "mtn"
+      break;
+    case "AirtelTigo":
+      true_One = "alt"
+      break;
+       case "Telecel":
+      true_One = "vod"
+      break;
+    default:
+      break;
+  }
   const params = JSON.stringify({
     "amount": amount * 100, // Paystack expects amount in kobo
     "email": "bernardboampong614@gmail.com", // You might want to get this from the user or your database
     "currency": "GHS",
     "mobile_money": {
       "phone": phoneNumber,
-      "provider": "mtn"
+      "provider": true_One
     }
   });
 

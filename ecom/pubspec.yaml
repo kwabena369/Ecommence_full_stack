@@ -72,6 +72,9 @@ flutter:
   assets:
     - assets/Fun/Cat.png
     - assets/Google_.png
+    - assets/PaymentProfile/MTN.png
+    - assets/PaymentProfile/Telecel.png
+    - assets/PaymentProfile/AirtelTigo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

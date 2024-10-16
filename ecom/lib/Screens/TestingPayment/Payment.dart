@@ -12,68 +12,174 @@ class _PaymentScreenState extends State<PaymentScreen> {
   String _amount = '';
   String _phoneNumber = '';
 
+  String? _selectedOption;
+  final List<String> _options = ["MTN", 'AirtelTigo', 'Telecel'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Make Payment'),
+        title:
+            Text('Make Payment', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.orange,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Amount (GHS)',
-                  border: OutlineInputBorder(),
+      body: Container(
+        decoration: BoxDecoration(
+         
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Card(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Amount (GHS)',
+                                prefixIcon: Icon(Icons.attach_money,
+                                    color: Colors.purple),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                      color: Colors.purple, width: 2),
+                                ),
+                              ),
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter an amount';
+                                }
+                                if (double.tryParse(value) == null) {
+                                  return 'Please enter a valid number';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) => _amount = value!,
+                            ),
+                            SizedBox(height: 16),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Phone Number',
+                                prefixIcon:
+                                    Icon(Icons.phone, color: Colors.purple),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                     
+                                ),
+                              ),
+                              keyboardType: TextInputType.phone,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a phone number';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) => _phoneNumber = value!,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    Card(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Select Payment Option',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 16),
+                            DropdownButtonFormField<String>(
+                              value: _selectedOption,
+                              hint: Text('Choose your provider'),
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _selectedOption = newValue;
+                                });
+                              },
+                              items: _options.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/PaymentProfile/${value}.png',
+                                        width: 30,
+                                        height: 30,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text(value),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    ElevatedButton(
+                      child: Text(
+                        'Pay Now',
+                        style: TextStyle(
+                            fontSize: 28, fontWeight: FontWeight.bold,color: Colors.white),
+                      ),
+                      onPressed: _initiatePayment,
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black, backgroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an amount';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _amount = value!,
               ),
-              SizedBox(height: 16),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a phone number';
-                  }
-                  // You might want to add more specific validation for MTN numbers
-                  return null;
-                },
-                onSaved: (value) => _phoneNumber = value!,
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                child: Text('Pay with MTN Mobile Money'),
-                onPressed: _initiatePayment,
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-void _initiatePayment() async {
+  void _initiatePayment() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -86,6 +192,7 @@ void _initiatePayment() async {
           body: jsonEncode(<String, String>{
             'amount': _amount,
             'phoneNumber': _phoneNumber,
+            "OptionSelected": _selectedOption ?? '',
           }),
         );
 
@@ -110,7 +217,6 @@ void _initiatePayment() async {
       }
     }
   }
-
 
   void _showOtpDialog(String message, String reference) {
     String otp = '';
@@ -146,7 +252,7 @@ void _initiatePayment() async {
     );
   }
 
-void _submitOtp(String otp, String reference) async {
+  void _submitOtp(String otp, String reference) async {
     try {
       final response = await http.post(
         Uri.parse('https://ecom-node-back.vercel.app/submit-otp'),
@@ -173,6 +279,7 @@ void _submitOtp(String otp, String reference) async {
       _showErrorDialog('An error occurred: $e');
     }
   }
+
   void _showSuccessDialog(String message) {
     showDialog(
       context: context,
@@ -180,30 +287,6 @@ void _submitOtp(String otp, String reference) async {
         return AlertDialog(
           title: Text('Success'),
           content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                // You might want to navigate back to a previous screen or refresh the current one
-                // Navigator.of(context).pop(); // Uncomment this if you want to go back to the previous screen
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-  
-
-  void _showUssdDialog(String ussdCode) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Complete Payment'),
-          content:
-              Text('Dial this USSD code to complete your payment: $ussdCode'),
           actions: <Widget>[
             TextButton(
               child: Text('OK'),
