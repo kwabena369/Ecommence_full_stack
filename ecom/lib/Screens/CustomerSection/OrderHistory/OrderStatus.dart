@@ -58,10 +58,35 @@ class _OrdersScreenState extends State<OrdersScreen> {
     }
   }
 
-//  this function called the fetchOrders again
-  void RefreshPage() {
-    //   ti
+  void _refreshPage() {
     _fetchOrders();
+  }
+
+  void _navigateToPayment(double amount) {
+    Navigator.of(context).pushNamed('/Pay', arguments: amount);
+  }
+
+  Widget _buildStatusIcon(String status) {
+    IconData iconData;
+    Color color;
+    switch (status.toLowerCase()) {
+      case 'processing':
+        iconData = Icons.hourglass_empty;
+        color = Colors.orange;
+        break;
+      case 'shipped':
+        iconData = Icons.local_shipping;
+        color = Colors.blue;
+        break;
+      case 'delivered':
+        iconData = Icons.check_circle;
+        color = Colors.green;
+        break;
+      default:
+        iconData = Icons.info;
+        color = Colors.grey;
+    }
+    return Icon(iconData, color: color);
   }
 
   @override
@@ -70,30 +95,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
       appBar: AppBar(
         title: const Text('My Orders'),
         actions: [
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.transparent),
-            child: Row(children: [
-              ElevatedButton(
-                  onPressed: () {
-                    RefreshPage();
-                  },
-                  child: Text(
-                    "RefreshPage",
-                    style: TextStyle(
-                        color: Colors.orange,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w100),
-                  )),
-              // FOR THE APYEMENT PLACE
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacementNamed("/Pay");
-                  },
-                  child: const Text("Payment"))
-            ]),
-          )
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _refreshPage,
+          ),
         ],
       ),
       body: _isLoading
@@ -107,6 +112,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     return Card(
                       margin: const EdgeInsets.all(8),
                       child: ExpansionTile(
+                        leading: _buildStatusIcon(order['status']),
                         title: Text('Order #${order['_id'].substring(0, 8)}'),
                         subtitle: Text(
                           'Status: ${order['status']} - ${DateFormat('MMM d, yyyy').format(DateTime.parse(order['orderDate']))}',
@@ -153,6 +159,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
                               ],
                             ),
                           ),
+                          if (order['status'].toLowerCase() != 'pending')
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: ElevatedButton(
+                                child: const Text('Pay Now'),
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white, backgroundColor: Colors.green,
+                                ),
+                                onPressed: () => _navigateToPayment(
+                                    order['totalAmount'].toDouble()),
+                              ),
+                            ),
                         ],
                       ),
                     );

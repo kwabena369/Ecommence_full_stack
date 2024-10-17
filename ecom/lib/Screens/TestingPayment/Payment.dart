@@ -3,17 +3,27 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class PaymentScreen extends StatefulWidget {
+  final double amount;
+
+  const PaymentScreen({Key? key, required this.amount}) : super(key: key);
+
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _amount = '';
+  late String _amount;
   String _phoneNumber = '';
 
   String? _selectedOption;
   final List<String> _options = ["MTN", 'AirtelTigo', 'Telecel'];
+
+  @override
+  void initState() {
+    super.initState();
+    _amount = widget.amount.toStringAsFixed(2);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,154 +34,141 @@ class _PaymentScreenState extends State<PaymentScreen> {
         backgroundColor: Colors.orange,
         elevation: 0,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-         
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(24.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Card(
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Amount (GHS)',
-                                prefixIcon: Icon(Icons.attach_money,
-                                    color: Colors.purple),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: Colors.purple, width: 2),
-                                ),
-                              ),
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter an amount';
-                                }
-                                if (double.tryParse(value) == null) {
-                                  return 'Please enter a valid number';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) => _amount = value!,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          initialValue: _amount,
+                          decoration: InputDecoration(
+                            labelText: 'Amount (GHS)',
+                            prefixIcon:
+                                Icon(Icons.attach_money, color: Colors.purple),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            SizedBox(height: 16),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Phone Number',
-                                prefixIcon:
-                                    Icon(Icons.phone, color: Colors.purple),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                     
-                                ),
-                              ),
-                              keyboardType: TextInputType.phone,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a phone number';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) => _phoneNumber = value!,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.purple, width: 2),
                             ),
-                          ],
+                          ),
+                          keyboardType: TextInputType.number,
+                          readOnly: true,
                         ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    Card(
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Select Payment Option',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                        SizedBox(height: 16),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Phone Number',
+                            prefixIcon: Icon(Icons.phone, color: Colors.purple),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            SizedBox(height: 16),
-                            DropdownButtonFormField<String>(
-                              value: _selectedOption,
-                              hint: Text('Choose your provider'),
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedOption = newValue;
-                                });
-                              },
-                              items: _options.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/PaymentProfile/${value}.png',
-                                        width: 30,
-                                        height: 30,
-                                      ),
-                                      SizedBox(width: 10),
-                                      Text(value),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.purple, width: 2),
                             ),
-                          ],
+                          ),
+                          keyboardType: TextInputType.phone,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a phone number';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => _phoneNumber = value!,
                         ),
-                      ),
+                      ],
                     ),
-                    SizedBox(height: 24),
-                    ElevatedButton(
-                      child: Text(
-                        'Pay Now',
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.bold,color: Colors.white),
-                      ),
-                      onPressed: _initiatePayment,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black, backgroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                SizedBox(height: 24),
+                Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Select Payment Option',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: _selectedOption,
+                          hint: Text('Choose your provider'),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.purple, width: 2),
+                            ),
+                          ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedOption = newValue;
+                            });
+                          },
+                          items: _options
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    'assets/PaymentProfile/${value}.png',
+                                    width: 30,
+                                    height: 30,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(value),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 24),
+                ElevatedButton(
+                  child: Text(
+                    'Pay Now',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: _initiatePayment,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.green,
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
