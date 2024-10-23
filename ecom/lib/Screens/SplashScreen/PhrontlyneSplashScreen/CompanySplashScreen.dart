@@ -92,7 +92,7 @@ class _CompanySplashScreenState extends State<CompanySplashScreen>
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             child: Image.asset(
-                              'assets/company-logo.png', // Replace with your logo path
+                              'assets/_Factory/Accra_City.jpeg', // Replace with your logo path
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -102,7 +102,7 @@ class _CompanySplashScreenState extends State<CompanySplashScreen>
 
                         // Company Name
                         const Text(
-                          'Company Name', // Replace with your company name
+                          'Phrontlyne', //  the one
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
@@ -115,7 +115,7 @@ class _CompanySplashScreenState extends State<CompanySplashScreen>
 
                         // Tagline
                         const Text(
-                          'Your Business Tagline', // Replace with your tagline
+                          'phronting the line', // Replace with your tagline
                           style: TextStyle(
                             fontSize: 16,
                             color: Color(0xFF9B9B9B),
@@ -135,9 +135,10 @@ class _CompanySplashScreenState extends State<CompanySplashScreen>
             bottom: 30,
             right: 30,
             child: Image.asset(
-              'assets/small-logo.png', // Replace with your small logo path
+              'assets/_Factory/phrontlyne_logo.svg', // Replace with your small logo path
               width: 40,
               height: 40,
+              
             ),
           ),
         ],

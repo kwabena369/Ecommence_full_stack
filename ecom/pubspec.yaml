@@ -79,6 +79,8 @@ flutter:
     - assets/PaymentProfile/MTN.png
     - assets/PaymentProfile/Telecel.png
     - assets/PaymentProfile/AirtelTigo.png
+    - assets/_Factory/phrontlyne_logo.svg
+    - assets/_Factory/Accra_City.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

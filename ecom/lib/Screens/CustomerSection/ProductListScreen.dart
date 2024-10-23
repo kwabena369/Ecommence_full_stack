@@ -398,11 +398,11 @@ Widget _buildSearchAndFilter() {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          '💀Serwaa☠️ ☠️',
+          '💀',
           style: TextStyle(
               color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.orange.withOpacity(0.8),
+        backgroundColor: Colors.blueAccent.withOpacity(0.4),
         actions: [
           Stack(
             alignment: Alignment.center,
