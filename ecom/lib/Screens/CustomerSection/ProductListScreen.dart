@@ -16,16 +16,65 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   List<Map<String, dynamic>> cartItems = [];
   List<Map<String, dynamic>> _items = [];
+  // this section is the defination of the filter
+  List<Map<String, dynamic>> _filteredItems = [];
+
   bool _isLoading = true;
   Map<String, dynamic>? _userData;
+//  this is a section for  search thing
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedPriceRange = 'All';
+  final List<String> _priceRanges = [
+    'All',
+    'Under \$50',
+    '\$50-\$100',
+    'Over \$100'
+  ];
 
   @override
   void initState() {
     super.initState();
     _fetchItems();
     _loadUserData();
+   _searchController.addListener(_onSearchChanged);
+
   }
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+   void _onSearchChanged() {
+    _filterItems();
+  }
+  void _filterItems() {
+    setState(() {
+      _filteredItems = _items.where((item) {
+        bool matchesSearch = item['name']
+            .toString()
+            .toLowerCase()
+            .contains(_searchController.text.toLowerCase());
+
+        if (_selectedPriceRange == 'All') {
+          return matchesSearch;
+        }
+
+        double price = (item['Price'] as num).toDouble();
+        switch (_selectedPriceRange) {
+          case 'Under \$50':
+            return matchesSearch && price < 50;
+          case '\$50-\$100':
+            return matchesSearch && price >= 50 && price <= 100;
+          case 'Over \$100':
+            return matchesSearch && price > 100;
+          default:
+            return matchesSearch;
+        }
+      }).toList();
+    });
+  }
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     final String? userJson = prefs.getString('user');
@@ -36,7 +85,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     }
   }
 
-  Future<void> _fetchItems() async {
+Future<void> _fetchItems() async {
     setState(() {
       _isLoading = true;
     });
@@ -47,6 +96,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       if (response.statusCode == 200) {
         setState(() {
           _items = List<Map<String, dynamic>>.from(json.decode(response.body));
+          _filteredItems = _items; // Initialize filtered items
           _isLoading = false;
         });
       } else {
@@ -56,6 +106,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       print('Error fetching items: $e');
       setState(() {
         _items = [];
+        _filteredItems = [];
         _isLoading = false;
       });
     }
@@ -157,6 +208,56 @@ class _ProductListScreenState extends State<ProductListScreen> {
       },
     );
   }
+
+//   the ui for the search there
+Widget _buildSearchAndFilter() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Search Bar
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search products...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Price Range Filter
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _priceRanges.map((range) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: FilterChip(
+                    selected: _selectedPriceRange == range,
+                    label: Text(range),
+                    onSelected: (selected) {
+                      setState(() {
+                        _selectedPriceRange = selected ? range : 'All';
+                        _filterItems();
+                      });
+                    },
+                    backgroundColor: Colors.grey[200],
+                    selectedColor: Colors.orange.withOpacity(0.8),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   Widget _buildHeader() {
     return Column(
@@ -410,28 +511,38 @@ class _ProductListScreenState extends State<ProductListScreen> {
         ),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: _items.length,
-              itemBuilder: (context, index) {
-                final product = _items[index];
-                return SingleItem(
-                  previewItem: product['name'] ?? '',
-                  priceItem: (product['Price'] as num?)?.toDouble() ?? 0.0,
-                  itemId: product['_id']?.toString() ?? '',
-                  ratingItem: 5,
-                  base64Image: product['PreviewItem_Base_Content'] as String?,
-                  onAddToCart: () => addToCart(product),
-                  onFavoriteToggle: () {},
-                );
-              },
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                _buildSearchAndFilter(),
+                Expanded(
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.75,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    itemCount: _filteredItems.length,
+                    itemBuilder: (context, index) {
+                      final product = _filteredItems[index];
+                      return SingleItem(
+                        previewItem: product['name'] ?? '',
+                        priceItem:
+                            (product['Price'] as num?)?.toDouble() ?? 0.0,
+                        itemId: product['_id']?.toString() ?? '',
+                        ratingItem: 5,
+                        base64Image:
+                            product['PreviewItem_Base_Content'] as String?,
+                        onAddToCart: () => addToCart(product),
+                        onFavoriteToggle: () {},
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
     );
   }

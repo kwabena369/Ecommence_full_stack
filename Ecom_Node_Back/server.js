@@ -34,14 +34,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-//  the routing for the admin and others 
-// const authenticateAdmin = (req, res, next) => {
-//   if (req.session.adminId) {
-//     next();
-//   } else {
-//     res.redirect('/admin/login');
-//   }
-// };
+
 
 
 app.get('/admin/login', (req, res) => {
@@ -117,9 +110,33 @@ app.get("/items", async (req, res) => {
     });
   }
 });
+//  for the deleting of items 
+app.delete("/Delete/:id", async (req, res) => {
+  console.debug(res);
 
-
-
+  let idItem = req.params.id
+  
+  try {
+    
+    let isdeleted = await itemModel.deleteOne({
+       id : idItem
+    })
+    if (isdeleted) {
+ 
+      return res.status(200).json({
+        status: true,
+        message :"All done and set"
+       })
+     } else {
+      return res.status(500).json({
+        status: false,
+        message :"Error doing the thing"
+    })  
+     }
+  } catch (Err) {
+     console.debug(Err)
+   }
+})
 
 
 const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;

@@ -100,8 +100,10 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
   Future<void> _deleteItem(String itemId) async {
     try {
       final response = await http.delete(
-        Uri.parse('https://ecom-node-back.vercel.app/items/$itemId'),
+        Uri.parse('https://ecom-node-back.vercel.app/Delete/$itemId'),
       );
+
+
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Item deleted successfully')),
@@ -138,7 +140,6 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
             'previewItemBaseContent': base64Image,
           }),
         );
-
         if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Item updated successfully')),
@@ -297,7 +298,8 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
               : SafeArea(
                   child: GridView.builder(
                     padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 0.75,
                       crossAxisSpacing: 16,
@@ -315,7 +317,7 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
                             5, // You may want to implement a real rating system
                         base64Image:
                             product['PreviewItem_Base_Content'] as String?,
-                        onDelete: () => _deleteItem(product['id']),
+                        onDelete: () => {_deleteItem(product['_id'])},
                         onEdit: () => _showEditItemModal(product),
                       );
                     },
@@ -323,8 +325,6 @@ class _ItemBoardScreenState extends State<ItemBoardScreen> {
                 ),
     );
   }
-
-
 }
 
             // onAddToCart: () => addToCart(product),
