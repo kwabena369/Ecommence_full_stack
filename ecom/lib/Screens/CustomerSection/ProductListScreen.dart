@@ -210,34 +210,40 @@ Future<void> _fetchItems() async {
   }
 
 //   the ui for the search there
-Widget _buildSearchAndFilter() {
+  Widget _buildSearchAndFilter() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      color: Colors.white,
+      padding: EdgeInsets.all(16),
       child: Column(
         children: [
           // Search Bar
-          TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search products...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search products...',
+                prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                border: InputBorder.none,
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
-              filled: true,
-              fillColor: Colors.white,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           // Price Range Filter
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: _priceRanges.map((range) {
+                final isSelected = _selectedPriceRange == range;
                 return Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                  padding: EdgeInsets.only(right: 8),
                   child: FilterChip(
-                    selected: _selectedPriceRange == range,
+                    selected: isSelected,
                     label: Text(range),
                     onSelected: (selected) {
                       setState(() {
@@ -245,8 +251,20 @@ Widget _buildSearchAndFilter() {
                         _filterItems();
                       });
                     },
-                    backgroundColor: Colors.grey[200],
-                    selectedColor: Colors.orange.withOpacity(0.8),
+                    backgroundColor: Colors.white,
+                    selectedColor: Colors.blue.withOpacity(0.2),
+                    checkmarkColor: Colors.blue,
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.blue : Colors.black87,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(
+                        color: isSelected ? Colors.blue : Colors.grey[300]!,
+                      ),
+                    ),
                   ),
                 );
               }).toList(),
@@ -396,120 +414,139 @@ Widget _buildSearchAndFilter() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text(
-          '💀',
-          style: TextStyle(
-              color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu, color: Colors.black87),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
         ),
-        backgroundColor: Colors.blueAccent.withOpacity(0.4),
+        title: Text(
+          'TryMic Shop',
+          style: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: _showCartOverlay,
-                color: Colors.white,
-              ),
-              if (cartItemCount > 0)
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.lightBlue,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    child: Text(
-                      '$cartItemCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.shopping_cart_outlined, color: Colors.black87),
+                  onPressed: _showCartOverlay,
+                ),
+                if (cartItemCount > 0)
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
                       ),
-                      textAlign: TextAlign.center,
+                      child: Text(
+                        '$cartItemCount',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(16),
+            color: Colors.blue,
+            width: double.infinity,
+            child: SafeArea(
+              bottom: false,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 30,
+                    child: Icon(Icons.person, size: 35, color: Colors.blue),
+                  ),
+                  SizedBox(height: 12),
                   Text(
                     '💀_Original Gangster',
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                  SizedBox(height: 10),
-                  if (_userData != null) ...[
-                    Text(
-                      'Welcome, ${_userData!['email']}',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
+                  ),
+                  if (_userData != null)
+                    Text(
+                      _userData!['email'],
+                      style: TextStyle(color: Colors.white70),
+                    ),
                 ],
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.admin_panel_settings),
-              title: const Text('Orders'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/Order");
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.history_rounded),
-              title: const Text('History'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/History");
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Admin'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/AdminScreen");
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/AdminScreen");
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: _logout,
-            ),
-          ],
-        ),
+          ),
+          ListTile(
+            leading: Icon(Icons.home),
+            title: Text('Home'),
+            onTap: () => Navigator.pop(context),
+          ),
+          ListTile(
+            leading: Icon(Icons.shopping_bag),
+            title: Text('Orders'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, "/Order");
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.history),
+            title: Text('History'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, "/History");
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.admin_panel_settings),
+            title: Text('Admin'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, "/AdminScreen");
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text('Settings'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, "/AdminScreen");
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.logout, color: Colors.red),
+            title: Text('Logout', style: TextStyle(color: Colors.red)),
+            onTap: _logout,
+          ),
+        ],
       ),
+    ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
