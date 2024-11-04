@@ -89,3 +89,4 @@ class CurvePainter extends CustomPainter {
     return true;
   }
 }
+//the hope of life
