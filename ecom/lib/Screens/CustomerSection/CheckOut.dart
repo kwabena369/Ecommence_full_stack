@@ -8,7 +8,7 @@ class Checkout extends StatefulWidget {
   final List<Map<String, dynamic>> cartItems;
 
   const Checkout({Key? key, required this.cartItems}) : super(key: key);
-
+//angel I just can't do it we are going to //finish the job
   @override
   State<Checkout> createState() => _CheckoutState();
 }
