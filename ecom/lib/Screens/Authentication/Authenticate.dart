@@ -3,7 +3,7 @@ import 'package:ecom/Service/Authen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+//you are fired
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
