@@ -6,7 +6,7 @@ import 'dart:convert';
 //you are fired
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
-
+//there is hope
   @override
   _AuthScreenState createState() => _AuthScreenState();
 }
